@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployeeManagementService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">employeemanagementsystem</a> &gt; <a href="index.source.html" class="el_package">com.accent.employeemanagementsystem.employemanagementeservice</a> &gt; <span class="el_source">EmployeeManagementService.java</span></div><h1>EmployeeManagementService.java</h1><pre class="source lang-java linenums">package com.accent.employeemanagementsystem.employemanagementeservice;
+
+
+import com.accent.employeemanagementsystem.beandto.Department;
+import com.accent.employeemanagementsystem.beandto.Employee;
+import com.accent.employeemanagementsystem.departmentrepository.DepartmentRepository;
+import com.accent.employeemanagementsystem.deptentitydao.DepartmentEntity;
+import com.accent.employeemanagementsystem.empentitydao.EmployeeEntity;
+import com.accent.employeemanagementsystem.employeerepository.EmployeeRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Service
+<span class="fc" id="L25">public class EmployeeManagementService {</span>
+	@Autowired
+	private EmployeeRepository employeeRepository;
+	@Autowired
+	private DepartmentRepository departmentRepository;
+
+<span class="fc" id="L31">	Logger logger = LoggerFactory.getLogger(EmployeeManagementService.class);</span>
+
+
+
+    private static String dateInfo() {
+<span class="fc" id="L36">		SimpleDateFormat formatter = new SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;);</span>
+<span class="fc" id="L37">		Date date = new Date();</span>
+<span class="fc" id="L38">		return formatter.format(date);</span>
+		
+	}
+	public ResponseEntity&lt;EmployeeEntity&gt; saveEmployee(Employee employee) {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">		if (employee != null) {</span>
+<span class="fc" id="L43">			EmployeeEntity employeeEntity = new EmployeeEntity();</span>
+<span class="fc" id="L44">			BeanUtils.copyProperties(employee, employeeEntity);</span>
+			try {
+<span class="fc" id="L46">				employeeEntity = employeeRepository.save(employeeEntity);</span>
+<span class="fc" id="L47">				logger.info(&quot;Employee name {} saved @ {}&quot;, employeeEntity.getEmpName(), dateInfo());</span>
+<span class="fc" id="L48">				return new ResponseEntity&lt;EmployeeEntity&gt;(employeeEntity, HttpStatus.CREATED);</span>
+<span class="nc" id="L49">			} catch (Exception ex) {</span>
+<span class="nc" id="L50">				logger.error(&quot;Unable to save user @ {} error occured saveEmployee in service&quot;, dateInfo());</span>
+<span class="nc" id="L51">				return null;</span>
+			}
+		} else
+<span class="nc" id="L54">			logger.error(&quot;Employee Name {} creation failed @ {}&quot;, employee.getEmpName(), dateInfo());</span>
+<span class="nc" id="L55">		return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);</span>
+	}
+
+	public ResponseEntity&lt;EmployeeEntity&gt; fetchEmpById(Integer empId) {
+<span class="fc" id="L59">		List list = new ArrayList();</span>
+<span class="fc" id="L60">		list.add(empId);</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">		if (employeeRepository.findAllById(list).isEmpty()) {</span>
+<span class="nc" id="L62">			logger.warn(&quot;Wrong empId {} entered to access @ {}&quot;, empId, dateInfo());</span>
+<span class="nc" id="L63">			return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+		} else {
+<span class="fc" id="L65">			logger.info(&quot;empId {} is accessed @ {}&quot;, empId, dateInfo());</span>
+<span class="fc" id="L66">			return new ResponseEntity&lt;EmployeeEntity&gt;((EmployeeEntity) employeeRepository.findAllById(list).get(0),</span>
+					HttpStatus.FOUND);
+		}
+	}
+
+	public String deleteEmp(Integer empId) {
+<span class="fc" id="L72">		List list = new ArrayList();</span>
+<span class="fc" id="L73">		list.add(empId);</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">		if (employeeRepository.findAllById(list).isEmpty()) {</span>
+<span class="nc" id="L75">			logger.warn(&quot;empId {} is not found to delete @ {}&quot;, empId, dateInfo());</span>
+<span class="nc" id="L76">			return &quot;Employee Not Found&quot;;</span>
+		} else {
+<span class="fc" id="L78">			employeeRepository.deleteById(empId);</span>
+<span class="fc" id="L79">			logger.info(&quot;empId {} is deleted successfully @ {}&quot;, empId, dateInfo());</span>
+<span class="fc" id="L80">			return &quot;Employee Successfully Deleted&quot;;</span>
+		}
+	}
+
+	public List&lt;EmployeeEntity&gt; fetchAllEmp() {
+<span class="fc" id="L85">		List empList = employeeRepository.findAll();</span>
+<span class="fc" id="L86">		logger.info(&quot;All employees are fetched @ {}&quot;, dateInfo());</span>
+<span class="fc" id="L87">		return empList;</span>
+	}
+
+	public ResponseEntity&lt;EmployeeEntity&gt; updateEmp(Integer empId, Employee employee) {
+<span class="nc" id="L91">		List list = new ArrayList();</span>
+<span class="nc" id="L92">		list.add(empId);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">		if (employeeRepository.findAllById(list).isEmpty()) {</span>
+<span class="nc" id="L94">			logger.info(&quot;Employee name {} is not found to update @ {}&quot;, employee.getEmpName(), dateInfo());</span>
+<span class="nc" id="L95">			return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+		} else {
+<span class="nc" id="L97">			EmployeeEntity existingEmployee = (EmployeeEntity) employeeRepository.findAllById(list).get(0);</span>
+<span class="nc" id="L98">			BeanUtils.copyProperties(employee, existingEmployee);</span>
+			try {
+<span class="nc" id="L100">				existingEmployee = employeeRepository.save(existingEmployee);</span>
+<span class="nc" id="L101">				logger.info(&quot;Employee name {} is updated @ {}&quot;, existingEmployee.getEmpName(), dateInfo());</span>
+<span class="nc" id="L102">				return new ResponseEntity&lt;EmployeeEntity&gt;(existingEmployee, HttpStatus.CREATED);</span>
+<span class="nc" id="L103">			} catch (Exception ex) {</span>
+<span class="nc" id="L104">				logger.error(&quot;Unable to Update user @ {} error occured updateEmployee in service&quot;, dateInfo());</span>
+<span class="nc" id="L105">				return null;</span>
+			}
+
+		}
+	}
+
+	public ResponseEntity&lt;DepartmentEntity&gt; saveDepartment(Department department) {
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">		if (department != null) {</span>
+<span class="fc" id="L113">			DepartmentEntity departmentEntity = new DepartmentEntity();</span>
+<span class="fc" id="L114">			BeanUtils.copyProperties(department, departmentEntity);</span>
+			try {
+<span class="fc" id="L116">				departmentEntity = departmentRepository.save(departmentEntity);</span>
+<span class="fc" id="L117">				logger.info(&quot;Department name {} saved @ {}&quot;, departmentEntity.getDeptName(), dateInfo());</span>
+<span class="fc" id="L118">				return new ResponseEntity&lt;DepartmentEntity&gt;(departmentEntity, HttpStatus.CREATED);</span>
+<span class="nc" id="L119">			} catch (Exception ex) {</span>
+<span class="nc" id="L120">				logger.error(&quot;Unable to save department @ {} error occured saveDepartment in service&quot;, dateInfo());</span>
+<span class="nc" id="L121">				return null;</span>
+			}
+		} else {
+<span class="nc" id="L124">			logger.error(&quot;Department Name {} creation failed @ {}&quot;, department.getDeptName(), dateInfo());</span>
+<span class="nc" id="L125">			return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);</span>
+		}
+	}
+
+	public ResponseEntity&lt;DepartmentEntity&gt; fetchDeptById(Integer deptId) {
+<span class="fc" id="L130">		List list = new ArrayList();</span>
+<span class="fc" id="L131">		list.add(deptId);</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">		if (departmentRepository.findAllById(list).isEmpty()) {</span>
+<span class="nc" id="L133">			logger.warn(&quot;Wrong deptId {} entered to access @ {}&quot;, deptId, dateInfo());</span>
+<span class="nc" id="L134">			return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+		} else {
+<span class="fc" id="L136">			logger.info(&quot;deptId {} is accessed @ {}&quot;, deptId, dateInfo());</span>
+<span class="fc" id="L137">			return new ResponseEntity&lt;DepartmentEntity&gt;(</span>
+<span class="fc" id="L138">					(DepartmentEntity) departmentRepository.findAllById(list).get(0), HttpStatus.FOUND);</span>
+		}
+	}
+
+	public String deleteDept(Integer deptId) {
+<span class="fc" id="L143">		List list = new ArrayList();</span>
+<span class="fc" id="L144">		list.add(deptId);</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">		if (departmentRepository.findAllById(list).isEmpty()) {</span>
+<span class="nc" id="L146">			logger.warn(&quot;deptId {} is not found to delete @ {}&quot;, deptId, dateInfo());</span>
+<span class="nc" id="L147">			return &quot;Department Not Found&quot;;</span>
+		} else {
+<span class="fc" id="L149">			departmentRepository.deleteById(deptId);</span>
+<span class="fc" id="L150">			logger.info(&quot;deptId {} is deleted successfully @ {}&quot;, deptId, dateInfo());</span>
+<span class="fc" id="L151">			return &quot;Department Successfully Deleted&quot;;</span>
+		}
+	}
+
+	public List&lt;DepartmentEntity&gt; fetchAllDept() {
+
+<span class="fc" id="L157">		List depList = departmentRepository.findAll();</span>
+<span class="fc" id="L158">		logger.info(&quot;All Departments are fetched @ {}&quot;, dateInfo());</span>
+<span class="fc" id="L159">		return depList;</span>
+	}
+
+	public ResponseEntity&lt;DepartmentEntity&gt; updateDept(Integer deptId, Department department) {
+<span class="nc" id="L163">		List list = new ArrayList();</span>
+<span class="nc" id="L164">		list.add(deptId);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">		if (departmentRepository.findAllById(list).isEmpty()) {</span>
+<span class="nc" id="L166">			logger.info(&quot;Department name {} is not found to update @ {}&quot;, department.getDeptName(), dateInfo());</span>
+<span class="nc" id="L167">			return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</span>
+		} else {
+<span class="nc" id="L169">			DepartmentEntity existingDepartment = (DepartmentEntity) departmentRepository.findAllById(list).get(0);</span>
+<span class="nc" id="L170">			BeanUtils.copyProperties(department, existingDepartment);</span>
+			try {
+<span class="nc" id="L172">				existingDepartment = departmentRepository.save(existingDepartment);</span>
+<span class="nc" id="L173">				logger.info(&quot;Department name {} is updated @ {}&quot;, department.getDeptName(), dateInfo());</span>
+<span class="nc" id="L174">				return new ResponseEntity&lt;DepartmentEntity&gt;(existingDepartment, HttpStatus.CREATED);</span>
+<span class="nc" id="L175">			} catch (Exception ex) {</span>
+<span class="nc" id="L176">				logger.error(&quot;Unable to update department @ {} error occured updateDepartment in service&quot;, dateInfo());</span>
+<span class="nc" id="L177">				return null;</span>
+			}
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

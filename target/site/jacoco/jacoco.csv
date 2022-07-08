@@ -1,0 +1,17 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+employeemanagementsystem,com.accent.employeemanagementsystem.jwtuserentitydao,AuthRequest,17,0,0,0,8,0,5,0,5,0
+employeemanagementsystem,com.accent.employeemanagementsystem.jwtuserentitydao,User,39,27,0,0,17,11,11,3,11,3
+employeemanagementsystem,com.accent.employeemanagementsystem.deptentitydao,DepartmentEntity,4,22,0,0,2,10,1,5,1,5
+employeemanagementsystem,com.accent.employeemanagementsystem.dbconfig,EmpDBConfig,0,23,0,0,0,5,0,4,0,4
+employeemanagementsystem,com.accent.employeemanagementsystem.dbconfig,DeptDBConfig,0,23,0,0,0,5,0,4,0,4
+employeemanagementsystem,com.accent.employeemanagementsystem.dbconfig,JWTsecuserDBConfig,0,23,0,0,0,5,0,4,0,4
+employeemanagementsystem,com.accent.employeemanagementsystem.beandto,Department,6,10,0,0,3,5,1,3,1,3
+employeemanagementsystem,com.accent.employeemanagementsystem.beandto,Employee,15,31,0,0,6,14,1,9,1,9
+employeemanagementsystem,com.accent.employeemanagementsystem.employemanagementeservice,EmployeeManagementService,206,214,10,6,44,46,10,10,2,10
+employeemanagementsystem,com.accent.employeemanagementsystem.controller,EmployeeManagementController,52,37,0,0,12,8,6,7,6,7
+employeemanagementsystem,com.accent.employeemanagementsystem,EmployeemanagementsystemApplication,5,40,0,0,2,5,1,2,1,2
+employeemanagementsystem,com.accent.employeemanagementsystem.jwtconfig,JwtFilter,63,3,10,0,16,1,6,1,1,1
+employeemanagementsystem,com.accent.employeemanagementsystem.jwtconfig,CustomUserDetailsService,37,3,0,0,6,1,2,1,2,1
+employeemanagementsystem,com.accent.employeemanagementsystem.jwtconfig,SecurityConfig,0,75,0,0,0,11,0,5,0,5
+employeemanagementsystem,com.accent.employeemanagementsystem.jwtconfig,JwtUtil,89,3,4,0,13,1,10,1,8,1
+employeemanagementsystem,com.accent.employeemanagementsystem.empentitydao,EmployeeEntity,10,46,0,0,4,20,3,9,3,9

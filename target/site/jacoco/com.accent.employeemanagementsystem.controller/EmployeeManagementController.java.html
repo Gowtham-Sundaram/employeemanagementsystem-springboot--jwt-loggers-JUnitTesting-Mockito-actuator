@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployeeManagementController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">employeemanagementsystem</a> &gt; <a href="index.source.html" class="el_package">com.accent.employeemanagementsystem.controller</a> &gt; <span class="el_source">EmployeeManagementController.java</span></div><h1>EmployeeManagementController.java</h1><pre class="source lang-java linenums">package com.accent.employeemanagementsystem.controller;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
+
+import com.accent.employeemanagementsystem.beandto.Department;
+import com.accent.employeemanagementsystem.beandto.Employee;
+import com.accent.employeemanagementsystem.deptentitydao.DepartmentEntity;
+import com.accent.employeemanagementsystem.empentitydao.EmployeeEntity;
+import com.accent.employeemanagementsystem.employemanagementeservice.EmployeeManagementService;
+import com.accent.employeemanagementsystem.jwtconfig.JwtUtil;
+import com.accent.employeemanagementsystem.jwtuserentitydao.AuthRequest;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+
+@RestController
+<span class="fc" id="L24">public class EmployeeManagementController {</span>
+
+	@Autowired
+	private JwtUtil jwtUtil;
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	@Autowired
+	private EmployeeManagementService employeeManagementService;
+
+<span class="fc" id="L33">	Logger logger = LoggerFactory.getLogger(EmployeeManagementController.class);</span>
+
+	@GetMapping(&quot;/&quot;)
+	public String welcome() {
+<span class="nc" id="L37">		return &quot;Welcome!&quot;;</span>
+	}
+
+	@PostMapping(&quot;/authenticate&quot;)
+	public String generateToken(@RequestBody AuthRequest authRequest) throws Exception {
+		try {
+<span class="nc" id="L43">			authenticationManager.authenticate(</span>
+<span class="nc" id="L44">					new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));</span>
+<span class="nc" id="L45">			logger.info(&quot;Logged in User: {}&quot;, authRequest.getUserName());</span>
+<span class="nc" id="L46">		} catch (Exception ex) {</span>
+<span class="nc" id="L47">			throw new Exception(&quot;invalid username/password&quot;);</span>
+<span class="nc" id="L48">		}</span>
+<span class="nc" id="L49">		return jwtUtil.generateToken(authRequest.getUserName());</span>
+	}
+
+	@PostMapping(&quot;/saveEmp&quot;)
+	public ResponseEntity&lt;EmployeeEntity&gt; saveEmployee(@RequestBody Employee employee) {
+<span class="fc" id="L54">		return employeeManagementService.saveEmployee(employee);</span>
+	}
+
+	@GetMapping(&quot;/getEmp/{id}&quot;)
+	public ResponseEntity&lt;EmployeeEntity&gt; fetchEmpById(@PathVariable(&quot;id&quot;) Integer empId) {
+<span class="fc" id="L59">		return employeeManagementService.fetchEmpById(empId);</span>
+	}
+
+	@DeleteMapping(&quot;/deleteEmp/{id}&quot;)
+	@ResponseStatus(HttpStatus.OK)
+	public String deleteEmp(@PathVariable(&quot;id&quot;) Integer empId) {
+<span class="fc" id="L65">		return employeeManagementService.deleteEmp(empId);</span>
+	}
+
+	@GetMapping(&quot;/fetchAllEmp&quot;)
+	public List&lt;EmployeeEntity&gt; fetchAllEmp() {
+<span class="nc" id="L70">		return employeeManagementService.fetchAllEmp();</span>
+	}
+
+	@PutMapping(&quot;/updateEmp/{id}&quot;)
+	public ResponseEntity&lt;EmployeeEntity&gt; updateEmp(@PathVariable(&quot;id&quot;) Integer empId, @RequestBody Employee employee) {
+<span class="nc" id="L75">		return employeeManagementService.updateEmp(empId, employee);</span>
+	}
+
+	@PostMapping(&quot;/saveDept&quot;)
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity&lt;DepartmentEntity&gt; saveDepartment(@RequestBody Department department) {
+<span class="fc" id="L81">		return employeeManagementService.saveDepartment(department);</span>
+	}
+
+	@GetMapping(&quot;/getDept/{id}&quot;)
+	@ResponseStatus(HttpStatus.FOUND)
+	public ResponseEntity&lt;DepartmentEntity&gt; fetchDeptById(@PathVariable(&quot;id&quot;) Integer deptId) {
+<span class="fc" id="L87">		return employeeManagementService.fetchDeptById(deptId);</span>
+	}
+
+	@DeleteMapping(&quot;/deleteDept/{id}&quot;)
+	@ResponseStatus(HttpStatus.OK)
+	public String deleteDept(@PathVariable(&quot;id&quot;) Integer deptId) {
+<span class="fc" id="L93">		return employeeManagementService.deleteDept(deptId);</span>
+	}
+
+	@GetMapping(&quot;/fetchAllDept&quot;)
+	public List&lt;DepartmentEntity&gt; fetchAllDept() {
+<span class="nc" id="L98">		return employeeManagementService.fetchAllDept();</span>
+	}
+
+	@PutMapping(&quot;/updateDept/{id}&quot;)
+	public ResponseEntity&lt;DepartmentEntity&gt; updateDept(@PathVariable(&quot;id&quot;) Integer deptId,
+			@RequestBody Department department) {
+<span class="nc" id="L104">		return employeeManagementService.updateDept(deptId, department);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

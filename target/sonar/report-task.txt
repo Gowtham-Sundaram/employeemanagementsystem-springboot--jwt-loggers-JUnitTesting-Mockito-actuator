@@ -1,0 +1,6 @@
+projectKey=accent
+serverUrl=http://localhost:9099
+serverVersion=9.5.0.56709
+dashboardUrl=http://localhost:9099/dashboard?id=accent
+ceTaskId=AYHZrnVyUDdOafBh9V7r
+ceTaskUrl=http://localhost:9099/api/ce/task?id=AYHZrnVyUDdOafBh9V7r
